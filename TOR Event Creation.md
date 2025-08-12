@@ -42,7 +42,13 @@
 // Installer name == tor-browser-windows-x86_64-portable-(version).exe
 // Detect the installer being downloaded
 DeviceFileEvents
-| where FileName startswith "tor"
+| where DeviceName =="<YOUR DEVICE>"
+| where InitiatingProcessAccountName == "kodoghouse"
+| where FileName contains "tor"
+| where Timestamp >= datetime(2025-08-12T02:13:03.861808Z)
+| order by Timestamp desc
+| project Timestamp, DeviceName, ActionType, FileName, FolderPath, SHA256, Account = InitiatingProcessAccountName
+
 
 // TOR Browser being silently installed
 // Take note of two spaces before the /S (I don't know why)
@@ -57,15 +63,21 @@ DeviceFileEvents
 
 // TOR Browser or service was launched
 DeviceProcessEvents
-| where ProcessCommandLine has_any("tor.exe","firefox.exe")
-| project  Timestamp, DeviceName, AccountName, ActionType, ProcessCommandLine
-
-// TOR Browser or service is being used and is actively creating network connections
-DeviceNetworkEvents
-| where InitiatingProcessFileName in~ ("tor.exe", "firefox.exe")
-| where RemotePort in (9001, 9030, 9040, 9050, 9051, 9150)
-| project Timestamp, DeviceName, InitiatingProcessAccountName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl
+| where DeviceName == "<YOUR DEVICE>"
+| where FileName has_any ("tor.exe", "firefox.exe", "Tor Browser.exe")
+| project  Timestamp, FileName, DeviceName, ActionType, InitiatingProcessCommandLine, SHA256
 | order by Timestamp desc
+
+
+// This query identifies potential Tor traffic by looking for connections
+// to known Tor ports (9001, 9030, 9040, 9050, 9051, 9150).
+DeviceNetworkEvents
+| where DeviceName == "<YOUR DEVICE>"
+| where InitiatingProcessFileName in~ ("tor.exe", "firefox.exe")
+| where RemotePort in (9001, 9030, 9040, 9050, 9051, 9150, 80, 43)
+| project Timestamp, DeviceName, InitiatingProcessAccountName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl, InitiatingProcessFolderPath
+| order by Timestamp desc
+
 
 // User shopping list was created and, changed, or deleted
 DeviceFileEvents
