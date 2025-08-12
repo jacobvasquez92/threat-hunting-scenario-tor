@@ -1,5 +1,6 @@
 # Threat Event (Unauthorized TOR Usage)
 **Unauthorized TOR Browser Installation and Use**
+<img width="1024" height="560" alt="image" src="https://github.com/user-attachments/assets/c86c71b4-cf3c-4113-8943-6f9d204272ec" />
 
 ## Steps the "Bad Actor" took Create Logs and IoCs:
 1. Download the TOR browser installer: https://www.torproject.org/download/
