@@ -27,26 +27,28 @@ Management suspects that some employees may be using TOR browsers to bypass netw
 
 ### 1. Searched the `DeviceFileEvents` Table
 
-Searched for any file that had the string "tor" in it and discovered what looks like the user "employee" downloaded a TOR installer, did something that resulted in many TOR-related files being copied to the desktop, and the creation of a file called `tor-shopping-list.txt` on the desktop at `2024-11-08T22:27:19.7259964Z`. These events began at `2024-11-08T22:14:48.6065231Z`.
+An initial search of the DeviceFileEvents table for files containing the string "tor" was performed, revealing a series of file-related events associated with user "kodoghouse". These events began at 2025-08-12T02:13:03.861808Z and included the download and subsequent silent installation of a Tor installer. This process resulted in the creation of multiple Tor-related files on the user's desktop, and culminated with the creation of a file named "tor-shopping-list.txt" on the desktop at 2025-08-12T02:23:52.5166321Z.
 
 **Query used to locate events:**
 
 ```kql
-DeviceFileEvents  
-| where DeviceName == "threat-hunt-lab"  
-| where InitiatingProcessAccountName == "employee"  
-| where FileName contains "tor"  
-| where Timestamp >= datetime(2024-11-08T22:14:48.6065231Z)  
-| order by Timestamp desc  
+// Detect the installer being downloaded
+DeviceFileEvents
+| where DeviceName =="jv-win10-disa-s"
+| where InitiatingProcessAccountName == "kodoghouse"
+| where FileName contains "tor"
+| where Timestamp >= datetime(2025-08-12T02:13:03.861808Z)
+| order by Timestamp desc
 | project Timestamp, DeviceName, ActionType, FileName, FolderPath, SHA256, Account = InitiatingProcessAccountName
+
 ```
-<img width="1212" alt="image" src="https://github.com/user-attachments/assets/71402e84-8767-44f8-908c-1805be31122d">
+<img width="1611" height="587" alt="image" src="https://github.com/user-attachments/assets/49590a15-ebf2-4a0c-8038-775a3c11015f" />
 
 ---
 
 ### 2. Searched the `DeviceProcessEvents` Table
 
-Searched for any `ProcessCommandLine` that contained the string "tor-browser-windows-x86_64-portable-14.0.1.exe". Based on the logs returned, at `2024-11-08T22:16:47.4484567Z`, an employee on the "threat-hunt-lab" device ran the file `tor-browser-windows-x86_64-portable-14.0.1.exe` from their Downloads folder, using a command that triggered a silent installation.
+An investigation of the DeviceProcessEvents table for processes with the command line string tor-browser-windows-x86_64-portable-14.5.5.exe confirmed a suspicious event. At 2025-08-12T02:15:45.1270531Z, an employee on the jv-win10-disa-s device executed the file tor-browser-windows-x86_64-portable-14.5.5.exe from their Downloads folder. The command line included a switch that initiated a silent installation of the software.
 
 **Query used to locate event:**
 
@@ -57,7 +59,8 @@ DeviceProcessEvents
 | where ProcessCommandLine contains "tor-browser-windows-x86_64-portable-14.0.1.exe"  
 | project Timestamp, DeviceName, AccountName, ActionType, FileName, FolderPath, SHA256, ProcessCommandLine
 ```
-<img width="1212" alt="image" src="https://github.com/user-attachments/assets/b07ac4b4-9cb3-4834-8fac-9f5f29709d78">
+<img width="1515" height="555" alt="image" src="https://github.com/user-attachments/assets/9ec88ce9-bebc-45bd-bdd3-2009b2169d2e" />
+
 
 ---
 
