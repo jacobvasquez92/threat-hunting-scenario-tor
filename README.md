@@ -33,7 +33,6 @@ An initial search of the DeviceFileEvents table for files containing the string 
 **Query used to locate events:**
 
 ```kql
-// Detect the installer being downloaded
 DeviceFileEvents
 | where DeviceName =="jv-win10-disa-s"
 | where InitiatingProcessAccountName == "kodoghouse"
@@ -54,7 +53,6 @@ An investigation of the DeviceProcessEvents table for processes with the command
 **Query used to locate event:**
 
 ```kql
-
 DeviceProcessEvents  
 | where DeviceName == "threat-hunt-lab"  
 | where ProcessCommandLine contains "tor-browser-windows-x86_64-portable-14.0.1.exe"  
@@ -72,11 +70,12 @@ Based on a search of the DeviceProcessEvents table for processes initiated by th
 **Query used to locate events:**
 
 ```kql
-DeviceProcessEvents  
-| where DeviceName == "threat-hunt-lab"  
-| where FileName has_any ("tor.exe", "firefox.exe", "tor-browser.exe")  
-| project Timestamp, DeviceName, AccountName, ActionType, FileName, FolderPath, SHA256, ProcessCommandLine  
+DeviceProcessEvents
+| where DeviceName == "jv-win10-disa-s"
+| where FileName has_any ("tor.exe", "firefox.exe", "Tor Browser.exe")
+| project  Timestamp, FileName, DeviceName, ActionType, InitiatingProcessCommandLine, SHA256
 | order by Timestamp desc
+
 ```
 <img width="1467" height="638" alt="image" src="https://github.com/user-attachments/assets/171f0fd5-cacd-4f96-9b37-c8b5ab214ff5" />
 
@@ -90,13 +89,13 @@ An investigation of the DeviceNetworkEvents table for connections on known Tor p
 **Query used to locate events:**
 
 ```kql
-DeviceNetworkEvents  
-| where DeviceName == "threat-hunt-lab"  
-| where InitiatingProcessAccountName != "system"  
-| where InitiatingProcessFileName in ("tor.exe", "firefox.exe")  
-| where RemotePort in ("9001", "9030", "9040", "9050", "9051", "9150", "80", "443")  
-| project Timestamp, DeviceName, InitiatingProcessAccountName, ActionType, RemoteIP, RemotePort, RemoteUrl, InitiatingProcessFileName, InitiatingProcessFolderPath  
+DeviceNetworkEvents
+| where DeviceName == "jv-win10-disa-s"
+| where InitiatingProcessFileName in~ ("tor.exe", "firefox.exe")
+| where RemotePort in (9001, 9030, 9040, 9050, 9051, 9150, 80, 43)
+| project Timestamp, DeviceName, InitiatingProcessAccountName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl, InitiatingProcessFolderPath
 | order by Timestamp desc
+
 ```
 <img width="1433" height="725" alt="image" src="https://github.com/user-attachments/assets/c668410a-7a3c-43f5-a03e-5c06dafbef24" />
 
