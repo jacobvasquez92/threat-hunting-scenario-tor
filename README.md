@@ -66,7 +66,7 @@ DeviceProcessEvents
 
 ### 3. Searched the `DeviceProcessEvents` Table for TOR Browser Execution
 
-Searched for any indication that user "employee" actually opened the TOR browser. There was evidence that they did open it at `2024-11-08T22:17:21.6357935Z`. There were several other instances of `firefox.exe` (TOR) as well as `tor.exe` spawned afterwards.
+Based on a search of the DeviceProcessEvents table for processes initiated by the user kodoghouse, evidence of Tor Browser usage was identified. The initial launch was detected at 2025-08-12T02:16:12.6258334Z, with the process being identified as firefox.exe. This initial event was followed by several subsequent instances of both firefox.exe and tor.exe being spawned, confirming the activation of the Tor Browser.
 
 **Query used to locate events:**
 
@@ -77,13 +77,14 @@ DeviceProcessEvents
 | project Timestamp, DeviceName, AccountName, ActionType, FileName, FolderPath, SHA256, ProcessCommandLine  
 | order by Timestamp desc
 ```
-<img width="1212" alt="image" src="https://github.com/user-attachments/assets/b13707ae-8c2d-4081-a381-2b521d3a0d8f">
+<img width="1467" height="638" alt="image" src="https://github.com/user-attachments/assets/171f0fd5-cacd-4f96-9b37-c8b5ab214ff5" />
+
 
 ---
 
 ### 4. Searched the `DeviceNetworkEvents` Table for TOR Network Connections
 
-Searched for any indication the TOR browser was used to establish a connection using any of the known TOR ports. At `2024-11-08T22:18:01.1246358Z`, an employee on the "threat-hunt-lab" device successfully established a connection to the remote IP address `176.198.159.33` on port `9001`. The connection was initiated by the process `tor.exe`, located in the folder `c:\users\employee\desktop\tor browser\browser\torbrowser\tor\tor.exe`. There were a couple of other connections to sites over port `443`.
+An investigation of the DeviceNetworkEvents table for connections on known Tor ports confirmed unauthorized usage. At 2025-08-12T02:16:53.9930483Z, a connection was established from the jv-win10-disa-s device to the remote IP address 96.20.102.87 on port 9001. This connection was initiated by tor.exe. The process was located at c:\users\kodoghouse\desktop\tor browser\browser\torbrowser\tor\tor.exe. The investigation also found a few other connections, including several to sites over port 443.
 
 **Query used to locate events:**
 
@@ -96,7 +97,9 @@ DeviceNetworkEvents
 | project Timestamp, DeviceName, InitiatingProcessAccountName, ActionType, RemoteIP, RemotePort, RemoteUrl, InitiatingProcessFileName, InitiatingProcessFolderPath  
 | order by Timestamp desc
 ```
-<img width="1212" alt="image" src="https://github.com/user-attachments/assets/87a02b5b-7d12-4f53-9255-f5e750d0e3cb">
+<img width="1433" height="725" alt="image" src="https://github.com/user-attachments/assets/c668410a-7a3c-43f5-a03e-5c06dafbef24" />
+
+
 
 ---
 
