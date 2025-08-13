@@ -1,6 +1,7 @@
 # Official [Cyber Range](http://joshmadakor.tech/cyber-range) Project
 
-<img width="400" src="https://github.com/user-attachments/assets/44bac428-01bb-4fe9-9d85-96cba7698bee" alt="Tor Logo with the onion and a crosshair on it"/>
+<img width="869" height="515" alt="image" src="https://github.com/user-attachments/assets/8c59f805-b866-40a3-93c9-c0f6620cc37f" />
+
 
 # Threat Hunt Report: Unauthorized TOR Usage
 - [Scenario Creation](https://github.com/jacobvasquez92/threat-hunting-scenario-tor/tree/main)
@@ -105,61 +106,70 @@ DeviceNetworkEvents
 
 ## Chronological Event Timeline 
 
-### 1. File Download - TOR Installer
+### **1. File Download – TOR Installer**
 
-- **Timestamp:** `2024-11-08T22:14:48.6065231Z`
-- **Event:** The user "employee" downloaded a file named `tor-browser-windows-x86_64-portable-14.0.1.exe` to the Downloads folder.
-- **Action:** File download detected.
-- **File Path:** `C:\Users\employee\Downloads\tor-browser-windows-x86_64-portable-14.0.1.exe`
+| Timestamp           | Event                 | Action                                     | File Path                                                                      |
+| ------------------- | --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------ |
+| 2025-08-11 19:13:03 | TOR installer renamed | User renamed file to prepare for execution | `C:\Users\kodoghouse\Downloads\tor-browser-windows-x86_64-portable-14.5.5.exe` |
 
-### 2. Process Execution - TOR Browser Installation
+---
 
-- **Timestamp:** `2024-11-08T22:16:47.4484567Z`
-- **Event:** The user "employee" executed the file `tor-browser-windows-x86_64-portable-14.0.1.exe` in silent mode, initiating a background installation of the TOR Browser.
-- **Action:** Process creation detected.
-- **Command:** `tor-browser-windows-x86_64-portable-14.0.1.exe /S`
-- **File Path:** `C:\Users\employee\Downloads\tor-browser-windows-x86_64-portable-14.0.1.exe`
+### **2. Process Execution – TOR Browser Installation**
 
-### 3. Process Execution - TOR Browser Launch
+| Timestamp           | Event                                    | Action                                       | File Path                                                                      |
+| ------------------- | ---------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------ |
+| 2025-08-11 19:15:45 | TOR installer executed                   | Silent installation initiated by user        | `C:\Users\kodoghouse\Downloads\tor-browser-windows-x86_64-portable-14.5.5.exe` |
+| 2025-08-11 19:16:00 | TOR-related license/config files created | Installer wrote default license/config files | `C:\Users\kodoghouse\Desktop\Tor Browser\Browser\TorBrowser\Docs\`             |
+| 2025-08-11 19:16:01 | Core TOR executable created              | Installer deployed core executable           | `C:\Users\kodoghouse\Desktop\Tor Browser\Browser\TorBrowser\Tor\tor.exe`       |
+| 2025-08-11 19:16:08 | TOR Browser shortcut created             | Installer created desktop shortcut           | `C:\Users\kodoghouse\Desktop\Tor Browser.lnk`                                  |
 
-- **Timestamp:** `2024-11-08T22:17:21.6357935Z`
-- **Event:** User "employee" opened the TOR browser. Subsequent processes associated with TOR browser, such as `firefox.exe` and `tor.exe`, were also created, indicating that the browser launched successfully.
-- **Action:** Process creation of TOR browser-related executables detected.
-- **File Path:** `C:\Users\employee\Desktop\Tor Browser\Browser\TorBrowser\Tor\tor.exe`
+---
 
-### 4. Network Connection - TOR Network
+### **3. Process Execution – TOR Browser Launch**
 
-- **Timestamp:** `2024-11-08T22:18:01.1246358Z`
-- **Event:** A network connection to IP `176.198.159.33` on port `9001` by user "employee" was established using `tor.exe`, confirming TOR browser network activity.
-- **Action:** Connection success.
-- **Process:** `tor.exe`
-- **File Path:** `c:\users\employee\desktop\tor browser\browser\torbrowser\tor\tor.exe`
+| Timestamp           | Event                              | Action                        | File Path                                                     |
+| ------------------- | ---------------------------------- | ----------------------------- | ------------------------------------------------------------- |
+| 2025-08-11 19:16:12 | TOR Browser launched (firefox.exe) | User initiated browser launch | `C:\Users\kodoghouse\Desktop\Tor Browser\Browser\firefox.exe` |
 
-### 5. Additional Network Connections - TOR Browser Activity
+---
 
-- **Timestamps:**
-  - `2024-11-08T22:18:08Z` - Connected to `194.164.169.85` on port `443`.
-  - `2024-11-08T22:18:16Z` - Local connection to `127.0.0.1` on port `9150`.
-- **Event:** Additional TOR network connections were established, indicating ongoing activity by user "employee" through the TOR browser.
-- **Action:** Multiple successful connections detected.
+### **4. Network Connection – TOR Network**
 
-### 6. File Creation - TOR Shopping List
+| Timestamp           | Event                                           | Action                                 | File Path                                                                |
+| ------------------- | ----------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| 2025-08-11 19:16:48 | SOCKS proxy connection established              | `firefox.exe` connected to local proxy | N/A                                                                      |
+| 2025-08-11 19:16:51 | TOR process started                             | `tor.exe` initiated                    | `C:\Users\kodoghouse\Desktop\Tor Browser\Browser\TorBrowser\Tor\tor.exe` |
+| 2025-08-11 19:16:53 | Connected to TOR entry node (96.20.102.87:9001) | Outbound TOR network connection        | `tor.exe`                                                                |
 
-- **Timestamp:** `2024-11-08T22:27:19.7259964Z`
-- **Event:** The user "employee" created a file named `tor-shopping-list.txt` on the desktop, potentially indicating a list or notes related to their TOR browser activities.
-- **Action:** File creation detected.
-- **File Path:** `C:\Users\employee\Desktop\tor-shopping-list.txt`
+---
+
+### **5. Additional Network Connections – TOR Browser Activity**
+
+| Timestamp           | Event                                           | Action                 | File Path     |
+| ------------------- | ----------------------------------------------- | ---------------------- | ------------- |
+| 2025-08-11 19:17:57 | Reconnected to local proxy (127.0.0.1:9150)     | Maintained TOR circuit | `firefox.exe` |
+| 2025-08-11 19:18:02 | Connected to TOR relay node (78.138.98.42:9001) | TOR routing            | `tor.exe`     |
+| 2025-08-11 19:18:03 | Accessed .onion service                         | Hidden service access  | `tor.exe`     |
+
+---
+
+### **6. File Creation – TOR Shopping List**
+
+| Timestamp           | Event                           | Action                                 | File Path                                                       |
+| ------------------- | ------------------------------- | -------------------------------------- | --------------------------------------------------------------- |
+| 2025-08-11 19:23:52 | Shopping list shortcut created  | Link file generated in roaming profile | `C:\Users\kodoghouse\AppData\Roaming\tor-shopping-list.txt.lnk` |
+| 2025-08-11 19:23:52 | Shopping list text file created | Document saved on desktop              | `C:\Users\kodoghouse\Desktop\tor-shopping-list.txt`             |
 
 ---
 
 ## Summary
 
-The user "employee" on the "threat-hunt-lab" device initiated and completed the installation of the TOR browser. They proceeded to launch the browser, establish connections within the TOR network, and created various files related to TOR on their desktop, including a file named `tor-shopping-list.txt`. This sequence of activities indicates that the user actively installed, configured, and used the TOR browser, likely for anonymous browsing purposes, with possible documentation in the form of the "shopping list" file.
+The investigation confirmed that an employee, identified by the account kodoghouse, installed and used the Tor Browser on the workstation jv-win10-disa-s. The user downloaded a portable version of the Tor installer, and ran it using a silent installation command. The presence of tor.exe and firefox.exe and subsequent network connections to known Tor ports (9001 and 9150) provided clear evidence of its usage. The user also accessed an onion service site and created a shortcut to a file named tor-shopping-list.txt. These findings confirm the unauthorized use of Tor on the corporate network. As a response, the device was isolated and the user's direct manager was notified.
 
 ---
 
 ## Response Taken
 
-TOR usage was confirmed on the endpoint `threat-hunt-lab` by the user `employee`. The device was isolated, and the user's direct manager was notified.
+TOR usage was confirmed on endpoint jv-win10-disa-s. The device was isolated and the user's direct manager was notified.
 
 ---
