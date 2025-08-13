@@ -53,10 +53,11 @@ An investigation of the DeviceProcessEvents table for processes with the command
 **Query used to locate event:**
 
 ```kql
-DeviceProcessEvents  
-| where DeviceName == "threat-hunt-lab"  
-| where ProcessCommandLine contains "tor-browser-windows-x86_64-portable-14.0.1.exe"  
-| project Timestamp, DeviceName, AccountName, ActionType, FileName, FolderPath, SHA256, ProcessCommandLine
+DeviceProcessEvents
+| where DeviceName == "jv-win10-disa-s"
+| where ProcessCommandLine startswith "tor-browser-windows"
+| project Timestamp, DeviceName, ActionType, FileName, FolderPath, SHA256, ProcessCommandLine, AccountName
+
 ```
 <img width="1515" height="555" alt="image" src="https://github.com/user-attachments/assets/9ec88ce9-bebc-45bd-bdd3-2009b2169d2e" />
 
